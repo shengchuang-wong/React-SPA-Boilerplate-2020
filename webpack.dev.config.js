@@ -2,12 +2,42 @@ const webpack = require('webpack')
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
+const autoprefixer = require('autoprefixer')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
+const CssModuleLoader = {
+  loader: 'css-loader',
+  options: {
+    modules: {
+      mode: 'local',
+      localIdentName: '[path][name]__[local]--[hash:base64:5]',
+      context: path.resolve(__dirname, 'src'),
+      hashPrefix: 'my-custom-hash',
+    },
+  }
+}
+
+const postCssLoader = {
+  loader: 'postcss-loader',
+  options: {
+    ident: 'postcss',
+    plugins: () => [autoprefixer]
+  }
+}
+
+const sassOptions = {
+  loader: 'sass-resources-loader',
+  options: {
+    resources: 'src/assets/scss/*.scss' // Import all scss
+  }
+}
+
 module.exports = (_, { mode } = {}) => {
   return {
     mode,
     output: {
       path: path.resolve(__dirname, 'public'),
-      filename: 'bundle.js',
+      filename: 'bundle-[hash].js',
       publicPath: '/'
     },
     devtool: 'eval-source-map',
@@ -27,6 +57,51 @@ module.exports = (_, { mode } = {}) => {
               ]
             ]
           }
+        },
+        {
+          test: /\.module\.s(a|c)ss$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+              options: {
+                hmr: true
+              }
+            },
+            CssModuleLoader,
+            postCssLoader,
+            'sass-loader',
+            sassOptions
+          ]
+        },
+        {
+          test: /\.s(a|c)ss$/,
+          exclude: /\.module\.s(a|c)ss$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+              options: {
+                hmr: true
+              }
+            },
+            'css-loader',
+            postCssLoader,
+            'sass-loader',
+            sassOptions
+          ]
+        }
+        ,
+        {
+          test: /\.css$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+              options: {
+                hmr: true
+              }
+            },
+            'css-loader',
+            postCssLoader
+          ]
         }
       ]
     },
@@ -35,6 +110,7 @@ module.exports = (_, { mode } = {}) => {
       extensions: ['*', '.js', '.jsx']
     },
     devServer: {
+      contentBase: path.join(__dirname, 'public'),
       host: 'localhost',
       port: 8888,
       historyApiFallback: true,
@@ -47,6 +123,10 @@ module.exports = (_, { mode } = {}) => {
       }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(mode),
+      }),
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
+        chunkFilename: '[id].css'
       })
     ]
   }
