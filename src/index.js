@@ -9,7 +9,7 @@ import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { createBrowserHistory } from 'history'
-import { routerMiddleware, ConnectedRouter } from 'connected-react-router'
+import { routerMiddleware } from 'connected-react-router'
 import logger from 'redux-logger'
 import rootSaga from './sagas'
 
@@ -35,9 +35,6 @@ sagaMiddleware.run(rootSaga)
 ReactDOM.render(
   <Provider store={store}>
     <App />
-  </Provider>, document.getElementById('root'))
-
-
-
-
-
+  </Provider>,
+  document.getElementById('root')
+)
