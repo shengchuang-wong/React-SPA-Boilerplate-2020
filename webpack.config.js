@@ -5,6 +5,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const autoprefixer = require('autoprefixer')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
+const TerserJSPlugin = require('terser-webpack-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+
 const CssModuleLoader = {
   loader: 'css-loader',
   options: {
@@ -12,8 +16,8 @@ const CssModuleLoader = {
       mode: 'local',
       localIdentName: '[path][name]__[local]--[hash:base64:5]',
       context: path.resolve(__dirname, 'src'),
-      hashPrefix: 'my-custom-hash',
-    },
+      hashPrefix: 'my-custom-hash'
+    }
   }
 }
 
@@ -40,7 +44,6 @@ module.exports = (_, { mode } = {}) => {
       filename: 'bundle-[hash].js',
       publicPath: '/'
     },
-    devtool: 'eval-source-map',
     module: {
       rules: [
         {
@@ -64,7 +67,7 @@ module.exports = (_, { mode } = {}) => {
             {
               loader: MiniCssExtractPlugin.loader,
               options: {
-                hmr: true
+                hmr: mode === 'production' ? false : true
               }
             },
             CssModuleLoader,
@@ -80,7 +83,7 @@ module.exports = (_, { mode } = {}) => {
             {
               loader: MiniCssExtractPlugin.loader,
               options: {
-                hmr: true
+                hmr: mode === 'production' ? false : true
               }
             },
             'css-loader',
@@ -88,15 +91,14 @@ module.exports = (_, { mode } = {}) => {
             'sass-loader',
             sassOptions
           ]
-        }
-        ,
+        },
         {
           test: /\.css$/,
           use: [
             {
               loader: MiniCssExtractPlugin.loader,
               options: {
-                hmr: true
+                hmr: mode === 'production' ? false : true
               }
             },
             'css-loader',
@@ -109,25 +111,36 @@ module.exports = (_, { mode } = {}) => {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
       extensions: ['*', '.js', '.jsx']
     },
-    devServer: {
-      contentBase: path.join(__dirname, 'public'),
-      host: 'localhost',
-      port: 8888,
-      historyApiFallback: true,
-      hot: true,
-    },
+    ...(mode === 'development' && {
+      devtool: 'eval-source-map',
+      devServer: {
+        contentBase: path.join(__dirname, 'public'),
+        host: 'localhost',
+        port: 8888,
+        historyApiFallback: true,
+        hot: true
+      }
+    }),
+    ...(mode === 'production' && {
+      optimization: {
+        minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})]
+      }
+    }),
     plugins: [
-      new HtmlWebpackPlugin({  // Also generate a test.html
+      new HtmlWebpackPlugin({
         filename: 'index.html',
         template: 'src/templates/index.html'
       }),
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(mode),
+        'process.env.NODE_ENV': JSON.stringify(mode)
       }),
       new MiniCssExtractPlugin({
-        filename: '[name].css',
-        chunkFilename: '[id].css'
-      })
+        filename:
+          mode === 'production' ? '[name].[contenthash].css' : '[name].css',
+        chunkFilename:
+          mode === 'production' ? '[id][contenthash].css' : '[id].css'
+      }),
+      ...(mode === 'production' ? [new CleanWebpackPlugin()] : [])
     ]
   }
 }
