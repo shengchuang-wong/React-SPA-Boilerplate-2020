@@ -1,16 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const Example = () => {
+const ScooterPlotter = () => {
   return (
     <main>
-      <h1>Example Page</h1>
-
+      <h1>ScooterPlotter Page</h1>
       <p>
-        <Link to="/">Landing Page</Link>
-      </p>
-      <p>
-        <Link to="/example">Example Page</Link>
+        <Link to="/">ScooterPlotter Page</Link>
       </p>
       <p>
         <Link to="/non-exist">Non Exist Page</Link>
@@ -19,4 +15,4 @@ const Example = () => {
   )
 }
 
-export default Example
+export default ScooterPlotter

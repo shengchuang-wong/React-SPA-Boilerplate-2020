@@ -33,6 +33,7 @@ const store = createStore(
 sagaMiddleware.run(rootSaga)
 
 ReactDOM.render(
+  // @TODO: to add ErrorBoundary Here
   <Provider store={store}>
     <App />
   </Provider>,

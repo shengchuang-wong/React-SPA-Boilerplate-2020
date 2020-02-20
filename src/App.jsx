@@ -1,24 +1,16 @@
 import React from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
-import Landing from './pages/Landing/Landing'
-import Example from './pages/Example/Example'
+import ScooterPlotter from './pages/ScooterPlotter/ScooterPlotter'
 import NotFound from './pages/NotFound/NotFound'
+
+import './App.scss'
 
 const App = () => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route
-          exact
-          path="/"
-          component={Landing}
-        />
-        <Route
-          exact
-          path="/example"
-          component={Example}
-        />
+        <Route exact path="/" component={ScooterPlotter} />
         <Route component={NotFound} />
       </Switch>
     </BrowserRouter>
