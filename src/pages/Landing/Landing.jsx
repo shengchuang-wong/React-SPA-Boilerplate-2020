@@ -1,10 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const NotFound404 = () => {
+import './Landing.scss'
+
+const Landing = () => {
   return (
     <main>
-      <h1>Page Not Found</h1>
+      <h1>Landing Page</h1>
 
       <p>
         <Link to="/">Landing Page</Link>
@@ -19,4 +21,4 @@ const NotFound404 = () => {
   )
 }
 
-export default NotFound404
+export default Landing

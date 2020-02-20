@@ -104,14 +104,6 @@ module.exports = (_, { mode } = {}) => {
             'css-loader',
             postCssLoader
           ]
-        },
-        {
-          test: /\.(png|jpe?g|gif)$/i,
-          use: [
-            {
-              loader: 'file-loader'
-            }
-          ]
         }
       ]
     },
@@ -124,7 +116,7 @@ module.exports = (_, { mode } = {}) => {
       devServer: {
         contentBase: path.join(__dirname, 'public'),
         host: 'localhost',
-        port: 8080,
+        port: 8888,
         historyApiFallback: true,
         hot: true
       }
